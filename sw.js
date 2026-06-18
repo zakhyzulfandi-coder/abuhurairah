@@ -1,4 +1,4 @@
-const CACHE_NAME = "sisfo-ahis-pwa-cache-v2026061803";
+const CACHE_NAME = "sisfo-ahis-pwa-cache-v2026061804";
 const APP_SHELL = [
   "./",
   "./index.html",
