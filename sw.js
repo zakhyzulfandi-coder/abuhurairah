@@ -1,8 +1,9 @@
-const CACHE_NAME = "sisfo-ahis-github-rotation-vv1.0.2";
+const CACHE_NAME = "sisfo-ahis-github-rotation-fix-v1.0.3";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./manifest-mobile.webmanifest",
   "./offline.html",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
