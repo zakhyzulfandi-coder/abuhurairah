@@ -1,18 +1,17 @@
 {
-  "name": "SISFO AHIS MTS",
-  "short_name": "AHIS MTS",
-  "description": "SISFO AHIS MTS berbasis Google Apps Script Web App.",
+  "name": "SISFO AHIS",
+  "short_name": "SISFO AHIS",
+  "description": "SISFO AHIS berbasis Google Apps Script Web App.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
     "standalone",
     "minimal-ui"
   ],
-  "orientation": "portrait",
-  "background_color": "#f8fafc",
-  "theme_color": "#f27a24",
+  "orientation": "any",
+  "background_color": "#fff7ed",
+  "theme_color": "#f97316",
   "categories": [
     "education",
     "productivity"
