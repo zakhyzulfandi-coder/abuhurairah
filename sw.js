@@ -1,4 +1,4 @@
-const CACHE_NAME = "sisfo-ahis-github-rotation-fix-v1.0.3";
+const CACHE_NAME = "sisfo-ahis-update-popup-v1.0.4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -14,9 +14,6 @@ self.addEventListener("install", function (event) {
     caches.open(CACHE_NAME)
       .then(function (cache) {
         return cache.addAll(APP_SHELL);
-      })
-      .then(function () {
-        return self.skipWaiting();
       })
   );
 });
