@@ -346,6 +346,173 @@
         max-width: none;
       }
     }
+    /* ===== POPUP UPDATE PWA 5 DETIK ===== */
+    .pwa-update-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(15, 23, 42, .52);
+      backdrop-filter: blur(12px);
+    }
+
+    .pwa-update-modal.show {
+      display: flex;
+      animation: pwaFadeIn .18s ease-out;
+    }
+
+    @keyframes pwaFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .pwa-update-card {
+      width: min(430px, 94vw);
+      border-radius: 28px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .96);
+      border: 1px solid rgba(254, 215, 170, .92);
+      box-shadow: 0 30px 80px rgba(15, 23, 42, .28);
+    }
+
+    .pwa-update-head {
+      padding: 22px 22px 16px;
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, .18), transparent 36%),
+        linear-gradient(135deg, #fff7ed, #ffffff);
+      text-align: center;
+    }
+
+    .pwa-update-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 24px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f97316, #ffb84d);
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 900;
+      box-shadow: 0 18px 34px rgba(249, 115, 22, .26);
+    }
+
+    .pwa-update-title {
+      margin: 0;
+      font-size: 1.22rem;
+      font-weight: 950;
+      color: #0f172a;
+      letter-spacing: -.02em;
+    }
+
+    .pwa-update-subtitle {
+      margin: 8px auto 0;
+      color: #64748b;
+      font-size: .9rem;
+      font-weight: 700;
+      line-height: 1.5;
+      max-width: 330px;
+    }
+
+    .pwa-update-body {
+      padding: 18px 22px 22px;
+    }
+
+    .pwa-progress-wrap {
+      display: none;
+      margin-bottom: 16px;
+    }
+
+    .pwa-progress-wrap.show {
+      display: block;
+    }
+
+    .pwa-progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .pwa-progress-track {
+      width: 100%;
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ffedd5;
+      border: 1px solid #fed7aa;
+    }
+
+    .pwa-progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #f97316, #ffb84d);
+      box-shadow: 0 0 18px rgba(249, 115, 22, .35);
+      transition: width .16s linear;
+    }
+
+    .pwa-update-status {
+      min-height: 20px;
+      color: #64748b;
+      font-size: .82rem;
+      font-weight: 750;
+      margin-top: 9px;
+      line-height: 1.4;
+    }
+
+    .pwa-update-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .pwa-update-actions button {
+      border: 0;
+      border-radius: 15px;
+      padding: 12px 14px;
+      font-weight: 950;
+      cursor: pointer;
+      min-height: 46px;
+    }
+
+    .pwa-update-primary {
+      flex: 1;
+      color: #ffffff;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      box-shadow: 0 14px 28px rgba(249, 115, 22, .22);
+    }
+
+    .pwa-update-secondary {
+      color: #334155;
+      background: #f1f5f9;
+    }
+
+    .pwa-update-primary:disabled,
+    .pwa-update-secondary:disabled {
+      opacity: .72;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 520px) {
+      .pwa-update-actions {
+        flex-direction: column;
+      }
+
+      .pwa-update-secondary,
+      .pwa-update-primary {
+        width: 100%;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -408,7 +575,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.06.19.03";
+    const APP_VERSION = "2026.06.20.01";
     const frame = document.getElementById("appFrame");
     const splash = document.getElementById("splash");
     const offlineAlert = document.getElementById("offlineAlert");
@@ -561,14 +728,132 @@
       applyOrientationPolicy();
     });
 
+    /*******************************************************
+     * PWA UPDATE HANDLER
+     * - Saat sw.js dinaikkan, user yang sedang membuka aplikasi
+     *   maupun yang baru membuka akan mendapat popup update.
+     * - Saat diklik, tampil progress bar selama 5 detik.
+     * - Setelah selesai, Service Worker baru diaktifkan dan aplikasi dimuat ulang.
+     *******************************************************/
+    const pwaUpdateModal = document.getElementById("pwaUpdateModal");
+    const btnPwaUpdateNow = document.getElementById("btnPwaUpdateNow");
+    const btnPwaUpdateLater = document.getElementById("btnPwaUpdateLater");
+    const pwaProgressWrap = document.getElementById("pwaProgressWrap");
+    const pwaProgressBar = document.getElementById("pwaProgressBar");
+    const pwaProgressPercent = document.getElementById("pwaProgressPercent");
+    const pwaProgressText = document.getElementById("pwaProgressText");
+    const pwaUpdateStatus = document.getElementById("pwaUpdateStatus");
+    const pwaUpdateActions = document.getElementById("pwaUpdateActions");
+
+    let pwaUpdateRunning = false;
+    let pwaReloadAfterAnimation = false;
+
+    function showPwaUpdatePopup(worker) {
+      if (pwaUpdateRunning) return;
+
+      if (worker) {
+        newWorkerWaiting = worker;
+      }
+
+      if (pwaUpdateModal) {
+        pwaUpdateModal.classList.add("show");
+        pwaUpdateModal.setAttribute("aria-hidden", "false");
+      }
+
+      if (updateAlert) {
+        updateAlert.classList.remove("show");
+      }
+    }
+
+    function hidePwaUpdatePopup() {
+      if (!pwaUpdateModal) return;
+      pwaUpdateModal.classList.remove("show");
+      pwaUpdateModal.setAttribute("aria-hidden", "true");
+    }
+
+    function startPwaUpdateAnimation() {
+      if (pwaUpdateRunning) return;
+      pwaUpdateRunning = true;
+
+      if (pwaProgressWrap) pwaProgressWrap.classList.add("show");
+      if (pwaUpdateActions) pwaUpdateActions.style.display = "none";
+      if (btnPwaUpdateNow) btnPwaUpdateNow.disabled = true;
+      if (btnPwaUpdateLater) btnPwaUpdateLater.disabled = true;
+
+      const steps = [
+        "Mengunduh file aplikasi terbaru...",
+        "Memperbarui cache aplikasi...",
+        "Menyiapkan tampilan terbaru...",
+        "Membersihkan versi lama...",
+        "Memuat ulang aplikasi..."
+      ];
+
+      let progress = 0;
+      let lastStep = -1;
+      const duration = 5000;
+      const intervalMs = 100;
+      const startedAt = Date.now();
+
+      if (pwaProgressBar) pwaProgressBar.style.width = "0%";
+      if (pwaProgressPercent) pwaProgressPercent.textContent = "0%";
+      if (pwaProgressText) pwaProgressText.textContent = "Memulai update...";
+      if (pwaUpdateStatus) pwaUpdateStatus.textContent = "Jangan tutup aplikasi sampai proses selesai.";
+
+      const timer = setInterval(function () {
+        const elapsed = Date.now() - startedAt;
+        progress = Math.min(100, Math.round((elapsed / duration) * 100));
+
+        if (pwaProgressBar) pwaProgressBar.style.width = progress + "%";
+        if (pwaProgressPercent) pwaProgressPercent.textContent = progress + "%";
+
+        const stepIndex = Math.min(steps.length - 1, Math.floor(progress / 20));
+        if (stepIndex !== lastStep) {
+          lastStep = stepIndex;
+          if (pwaProgressText) pwaProgressText.textContent = steps[stepIndex];
+        }
+
+        if (progress >= 100) {
+          clearInterval(timer);
+
+          if (pwaUpdateStatus) {
+            pwaUpdateStatus.textContent = "Update selesai. Aplikasi sedang dimuat ulang...";
+          }
+
+          setTimeout(function () {
+            pwaReloadAfterAnimation = true;
+
+            if (newWorkerWaiting) {
+              newWorkerWaiting.postMessage({ type: "SKIP_WAITING" });
+
+              // Fallback jika controllerchange terlambat/tidak terpanggil.
+              setTimeout(function () {
+                location.reload();
+              }, 700);
+            } else {
+              location.reload();
+            }
+          }, 250);
+        }
+      }, intervalMs);
+    }
+
+    if (btnPwaUpdateNow) {
+      btnPwaUpdateNow.addEventListener("click", startPwaUpdateAnimation);
+    }
+
+    if (btnPwaUpdateLater) {
+      btnPwaUpdateLater.addEventListener("click", function () {
+        hidePwaUpdatePopup();
+      });
+    }
+
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async function () {
         try {
           const reg = await navigator.serviceWorker.register("./sw.js?v=" + APP_VERSION);
 
-          if (reg.waiting) {
-            newWorkerWaiting = reg.waiting;
-            updateAlert.classList.add("show");
+          if (reg.waiting && navigator.serviceWorker.controller) {
+            showPwaUpdatePopup(reg.waiting);
           }
 
           reg.addEventListener("updatefound", function () {
@@ -577,35 +862,88 @@
 
             newWorker.addEventListener("statechange", function () {
               if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-                newWorkerWaiting = newWorker;
-                updateAlert.classList.add("show");
+                showPwaUpdatePopup(newWorker);
               }
             });
           });
+
+          // Cek update berkala untuk user yang sedang membuka aplikasi.
+          setInterval(function () {
+            if (reg && reg.update) reg.update();
+          }, 60000);
+
+          document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === "visible" && reg && reg.update) {
+              reg.update();
+            }
+          });
+
+          if (navigator.serviceWorker.controller) {
+            setTimeout(function () {
+              if (reg && reg.update) reg.update();
+            }, 3000);
+          }
         } catch (err) {
           console.warn("Service Worker gagal didaftarkan:", err);
         }
       });
 
-      let refreshing = false;
       navigator.serviceWorker.addEventListener("controllerchange", function () {
-        if (refreshing) return;
-        refreshing = true;
-        location.reload();
+        if (pwaReloadAfterAnimation) {
+          location.reload();
+        }
       });
     }
 
-    btnApplyUpdate.addEventListener("click", function () {
-      if (!newWorkerWaiting) {
-        location.reload();
-        return;
-      }
-      newWorkerWaiting.postMessage({ type: "SKIP_WAITING" });
-    });
+    if (btnApplyUpdate) {
+      btnApplyUpdate.addEventListener("click", function () {
+        showPwaUpdatePopup(newWorkerWaiting);
+      });
+    }
 
-    document.addEventListener("gesturestart", function (event) {
+
+document.addEventListener("gesturestart", function (event) {
       event.preventDefault();
     });
   </script>
+  <!-- POPUP UPDATE PWA -->
+  <div class="pwa-update-modal" id="pwaUpdateModal" aria-hidden="true">
+    <div class="pwa-update-card">
+      <div class="pwa-update-head">
+        <div class="pwa-update-icon">
+          <i class="fas fa-cloud-arrow-down"></i>
+        </div>
+        <h2 class="pwa-update-title">Update Aplikasi Tersedia</h2>
+        <p class="pwa-update-subtitle">
+          Versi terbaru SISFO AHIS sudah siap. Klik update untuk memperbarui aplikasi.
+        </p>
+      </div>
+
+      <div class="pwa-update-body">
+        <div class="pwa-progress-wrap" id="pwaProgressWrap">
+          <div class="pwa-progress-top">
+            <span id="pwaProgressText">Menyiapkan update...</span>
+            <span id="pwaProgressPercent">0%</span>
+          </div>
+          <div class="pwa-progress-track">
+            <div class="pwa-progress-bar" id="pwaProgressBar"></div>
+          </div>
+          <div class="pwa-update-status" id="pwaUpdateStatus">
+            Mohon tunggu, aplikasi sedang diperbarui.
+          </div>
+        </div>
+
+        <div class="pwa-update-actions" id="pwaUpdateActions">
+          <button type="button" class="pwa-update-secondary" id="btnPwaUpdateLater">
+            Nanti
+          </button>
+          <button type="button" class="pwa-update-primary" id="btnPwaUpdateNow">
+            <i class="fas fa-rotate me-1"></i> Update Sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
