@@ -1,4 +1,4 @@
-const CACHE_NAME = "sisfo-ahis-update-popup-v1.0.9";
+const CACHE_NAME = "sisfo-ahis-update-popup-v2026062009";
 const APP_SHELL = [
   "./",
   "./index.html",
