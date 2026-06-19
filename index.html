@@ -1,42 +1,32 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  />
-  <meta name="theme-color" content="#f27a24" />
-  <meta name="description" content="SISFO AHIS MTS - Web App PWA" />
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#f97316">
+  <meta name="description" content="SISFO AHIS - PWA Web App">
 
-  <!--
-    Catatan:
-    Permission-Policy paling kuat sebenarnya diatur lewat HTTP Header.
-    Karena GitHub Pages tidak mudah mengatur header custom, izin utama diberikan lewat:
-    1. iframe allow="..."
-    2. tombol permintaan izin di halaman utama PWA
-    3. API browser saat user menekan tombol izin
-  -->
+  <title>SISFO AHIS</title>
 
-  <title>SISFO AHIS MTS</title>
-
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
 
   <style>
     :root {
-      --brand: #f27a24;
-      --brand-dark: #d95f0f;
-      --brand-soft: #fff4ec;
+      --brand: #f97316;
+      --brand-2: #fb923c;
       --ink: #0f172a;
       --muted: #64748b;
       --line: #e2e8f0;
-      --surface: #ffffff;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --warning: #f59e0b;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+      --safe-left: env(safe-area-inset-left);
+      --safe-right: env(safe-area-inset-right);
       --shadow: 0 18px 45px rgba(15, 23, 42, .12);
     }
 
@@ -52,13 +42,10 @@
       margin: 0;
       overflow: hidden;
       background:
-        radial-gradient(circle at top left, rgba(242, 122, 36, .12), transparent 34%),
-        linear-gradient(180deg, #f8fafc 0%, #eef4f8 100%);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        radial-gradient(circle at top left, rgba(249, 115, 22, .14), transparent 32%),
+        linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
-    }
-
-    body {
       overscroll-behavior: none;
       touch-action: manipulation;
     }
@@ -68,7 +55,12 @@
       height: 100%;
       position: relative;
       overflow: hidden;
-      background: #f8fafc;
+      background: #ffffff;
+      padding:
+        var(--safe-top)
+        var(--safe-right)
+        var(--safe-bottom)
+        var(--safe-left);
     }
 
     .app-frame {
@@ -88,7 +80,7 @@
       justify-content: center;
       padding: 24px;
       background:
-        radial-gradient(circle at top left, rgba(242, 122, 36, .18), transparent 36%),
+        radial-gradient(circle at top left, rgba(249, 115, 22, .18), transparent 36%),
         linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
       transition: opacity .35s ease, visibility .35s ease;
     }
@@ -103,7 +95,7 @@
       width: min(420px, 94vw);
       padding: 28px 24px;
       border-radius: 28px;
-      background: rgba(255, 255, 255, .84);
+      background: rgba(255, 255, 255, .88);
       border: 1px solid rgba(226, 232, 240, .88);
       box-shadow: var(--shadow);
       text-align: center;
@@ -122,7 +114,7 @@
       font-size: 26px;
       font-weight: 900;
       background: linear-gradient(135deg, var(--brand), #ffb84d);
-      box-shadow: 0 18px 34px rgba(242, 122, 36, .28);
+      box-shadow: 0 18px 34px rgba(249, 115, 22, .28);
     }
 
     .splash-title {
@@ -157,7 +149,7 @@
     .top-alert {
       position: fixed;
       left: 50%;
-      top: 14px;
+      top: calc(14px + var(--safe-top));
       transform: translateX(-50%);
       z-index: 80;
       width: min(620px, calc(100vw - 24px));
@@ -205,13 +197,13 @@
     }
 
     .install-box {
-      right: 14px;
-      bottom: 14px;
+      right: calc(14px + var(--safe-right));
+      bottom: calc(14px + var(--safe-bottom));
     }
 
     .permission-box {
-      left: 14px;
-      bottom: 14px;
+      left: calc(14px + var(--safe-left));
+      bottom: calc(14px + var(--safe-bottom));
     }
 
     .install-box.show,
@@ -248,7 +240,7 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--brand), #ff9f3d);
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
       color: #ffffff;
       flex: 1;
     }
@@ -258,48 +250,75 @@
       color: var(--ink);
     }
 
-    .permission-list {
-      display: grid;
-      gap: 7px;
-      margin: 12px 0;
+    .rotate-blocker {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, .18), transparent 36%),
+        linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+      text-align: center;
     }
 
-    .permission-item {
+    .rotate-card {
+      width: min(420px, 92vw);
+      padding: 26px 22px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid #fed7aa;
+      box-shadow: var(--shadow);
+    }
+
+    .rotate-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 24px;
+      margin: 0 auto 14px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 9px 10px;
-      border-radius: 14px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      font-size: .82rem;
-      font-weight: 800;
-    }
-
-    .status-pill {
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: .72rem;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--brand), #ffb84d);
+      color: #fff;
+      font-size: 30px;
       font-weight: 900;
-      white-space: nowrap;
-      background: #e2e8f0;
-      color: #475569;
     }
 
-    .status-pill.ok {
-      background: #dcfce7;
-      color: #166534;
+    .rotate-card h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 950;
+      color: var(--ink);
     }
 
-    .status-pill.no {
-      background: #fee2e2;
-      color: #991b1b;
+    .rotate-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.5;
+      font-size: .9rem;
     }
 
-    .status-pill.ask {
-      background: #ffedd5;
-      color: #9a3412;
+    /*
+      ATURAN ROTASI:
+      - HP/mobile kecil hanya portrait.
+      - Tablet/laptop bisa portrait maupun landscape.
+    */
+    @media (max-width: 767px) and (orientation: landscape) {
+      .rotate-blocker {
+        display: flex;
+      }
+
+      .app-shell,
+      .install-box,
+      .permission-box,
+      .top-alert,
+      .splash {
+        display: none !important;
+      }
     }
 
     @media (display-mode: standalone) {
@@ -311,14 +330,10 @@
     @media (max-width: 720px) {
       .permission-box,
       .install-box {
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
+        left: calc(12px + var(--safe-left));
+        right: calc(12px + var(--safe-right));
+        bottom: calc(12px + var(--safe-bottom));
         max-width: none;
-      }
-
-      .install-box.show + .permission-box.show {
-        bottom: 190px;
       }
     }
   </style>
@@ -329,7 +344,7 @@
     <iframe
       id="appFrame"
       class="app-frame"
-      title="SISFO AHIS MTS"
+      title="SISFO AHIS"
       src="https://script.google.com/a/~/macros/s/AKfycbytGPvOxJSwIR7tsbPwq2CsgXCvRBOUnU0SbE3acmPjRQs8EIyRa2gYQhjamzwHCAGy/exec"
       allow="geolocation *; notifications *; camera *; microphone *; clipboard-read *; clipboard-write *; fullscreen *; accelerometer *; gyroscope *; magnetometer *"
       allowfullscreen
@@ -340,14 +355,22 @@
   <div class="splash" id="splash">
     <div class="splash-card">
       <div class="logo-box">AH</div>
-      <h1 class="splash-title">SISFO AHIS MTS</h1>
+      <h1 class="splash-title">SISFO AHIS</h1>
       <p class="splash-sub">Memuat aplikasi. Pastikan koneksi internet aktif.</p>
       <div class="loader"></div>
     </div>
   </div>
 
+  <div class="rotate-blocker" id="rotateBlocker">
+    <div class="rotate-card">
+      <div class="rotate-icon">↻</div>
+      <h2>Gunakan Mode Portrait</h2>
+      <p>Pada HP, SISFO AHIS dikunci dalam mode portrait agar tampilan lebih rapi. Silakan putar kembali perangkat Anda.</p>
+    </div>
+  </div>
+
   <div class="top-alert" id="offlineAlert">
-    <span>Anda sedang offline. Aplikasi membutuhkan internet untuk membuka data Apps Script.</span>
+    <span>Anda sedang offline. Aplikasi membutuhkan internet untuk membuka data.</span>
     <button type="button" onclick="location.reload()">Muat Ulang</button>
   </div>
 
@@ -367,30 +390,7 @@
 
   <div class="permission-box" id="permissionBox">
     <p class="box-title">Izin Aplikasi</p>
-    <p class="box-text">
-      Aktifkan izin lokasi dan notifikasi agar fitur absensi berjalan lebih lancar.
-      Browser tetap akan meminta persetujuan pengguna.
-    </p>
-
-    <div class="permission-list">
-      <div class="permission-item">
-        <span>Lokasi / GPS</span>
-        <span class="status-pill ask" id="permGeo">Belum dicek</span>
-      </div>
-      <div class="permission-item">
-        <span>Notifikasi</span>
-        <span class="status-pill ask" id="permNotif">Belum dicek</span>
-      </div>
-      <div class="permission-item">
-        <span>Kamera / Upload bukti</span>
-        <span class="status-pill ask" id="permCamera">Opsional</span>
-      </div>
-      <div class="permission-item">
-        <span>Clipboard</span>
-        <span class="status-pill ask" id="permClipboard">Opsional</span>
-      </div>
-    </div>
-
+    <p class="box-text">Aktifkan izin lokasi dan notifikasi agar fitur absensi berjalan lebih lancar.</p>
     <div class="box-actions">
       <button type="button" class="btn-primary" id="btnRequestPermissions">Aktifkan Izin</button>
       <button type="button" class="btn-light" id="btnClosePermission">Tutup</button>
@@ -398,7 +398,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.06.18.03";
+    const APP_VERSION = "2026.06.19.02";
     const frame = document.getElementById("appFrame");
     const splash = document.getElementById("splash");
     const offlineAlert = document.getElementById("offlineAlert");
@@ -416,6 +416,32 @@
     let newWorkerWaiting = null;
     let splashTimer = null;
 
+    function isSmallMobile() {
+      return Math.min(window.innerWidth, window.innerHeight) < 768;
+    }
+
+    async function applyOrientationPolicy() {
+      /*
+        Browser/PWA tidak selalu mengizinkan orientation.lock().
+        Karena itu:
+        - Manifest dibuat orientation any.
+        - Tablet/laptop bebas rotasi.
+        - Mobile kecil dibantu lock portrait jika browser mendukung.
+        - CSS rotate blocker menjadi fallback saat HP diputar landscape.
+      */
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          if (isSmallMobile()) {
+            await screen.orientation.lock("portrait");
+          } else {
+            if (screen.orientation.unlock) screen.orientation.unlock();
+          }
+        }
+      } catch (err) {
+        // Diabaikan. CSS blocker tetap menjadi fallback.
+      }
+    }
+
     function hideSplash() {
       clearTimeout(splashTimer);
       splash.classList.add("hide");
@@ -425,77 +451,16 @@
       offlineAlert.classList.toggle("show", !navigator.onLine);
     }
 
-    function setPill(id, text, type) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = text;
-      el.classList.remove("ok", "no", "ask");
-      el.classList.add(type || "ask");
-    }
-
-    async function queryPermission(name) {
-      if (!navigator.permissions || !navigator.permissions.query) {
-        return "unknown";
-      }
-
-      try {
-        const status = await navigator.permissions.query({ name });
-        return status.state;
-      } catch (err) {
-        return "unknown";
-      }
-    }
-
-    function permissionText(state) {
-      if (state === "granted") return ["Diizinkan", "ok"];
-      if (state === "denied") return ["Ditolak", "no"];
-      if (state === "prompt") return ["Perlu izin", "ask"];
-      return ["Tidak pasti", "ask"];
-    }
-
-    async function refreshPermissionStatus() {
-      const geo = await queryPermission("geolocation");
-      const geoText = permissionText(geo);
-      setPill("permGeo", geoText[0], geoText[1]);
-
-      if ("Notification" in window) {
-        const notifState = Notification.permission;
-        const notifText = permissionText(notifState === "default" ? "prompt" : notifState);
-        setPill("permNotif", notifText[0], notifText[1]);
-      } else {
-        setPill("permNotif", "Tidak didukung", "no");
-      }
-
-      const cam = await queryPermission("camera");
-      const camText = permissionText(cam);
-      setPill("permCamera", camText[0], camText[1]);
-
-      const clip = await queryPermission("clipboard-write");
-      const clipText = permissionText(clip);
-      setPill("permClipboard", clipText[0], clipText[1]);
-    }
-
     function requestGeolocationPermission() {
       return new Promise(function (resolve) {
         if (!navigator.geolocation) {
-          setPill("permGeo", "Tidak didukung", "no");
           resolve(false);
           return;
         }
 
         navigator.geolocation.getCurrentPosition(
-          function () {
-            setPill("permGeo", "Diizinkan", "ok");
-            resolve(true);
-          },
-          function (error) {
-            if (error && error.code === error.PERMISSION_DENIED) {
-              setPill("permGeo", "Ditolak", "no");
-            } else {
-              setPill("permGeo", "Perlu ulang", "ask");
-            }
-            resolve(false);
-          },
+          function () { resolve(true); },
+          function () { resolve(false); },
           {
             enableHighAccuracy: true,
             timeout: 12000,
@@ -506,66 +471,24 @@
     }
 
     async function requestNotificationPermission() {
-      if (!("Notification" in window)) {
-        setPill("permNotif", "Tidak didukung", "no");
-        return false;
-      }
-
+      if (!("Notification" in window)) return false;
       try {
         const result = await Notification.requestPermission();
-        const notifText = permissionText(result === "default" ? "prompt" : result);
-        setPill("permNotif", notifText[0], notifText[1]);
-
-        if (result === "granted") {
-          try {
-            new Notification("SISFO AHIS", {
-              body: "Notifikasi aplikasi berhasil diaktifkan.",
-              icon: "./icons/icon-192.png"
-            });
-          } catch (err) {}
-        }
-
         return result === "granted";
       } catch (err) {
-        setPill("permNotif", "Gagal meminta", "no");
         return false;
       }
-    }
-
-    async function requestClipboardPermission() {
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText("");
-          setPill("permClipboard", "Siap", "ok");
-          return true;
-        }
-      } catch (err) {
-        setPill("permClipboard", "Opsional", "ask");
-      }
-      return false;
-    }
-
-    async function requestOptionalCameraPermission() {
-      // Tidak otomatis membuka kamera agar tidak mengagetkan user.
-      // Izin kamera sudah diberikan ke iframe lewat attribute allow.
-      const cam = await queryPermission("camera");
-      const camText = permissionText(cam);
-      setPill("permCamera", cam === "unknown" ? "Siap saat dibutuhkan" : camText[0], cam === "denied" ? "no" : "ask");
     }
 
     async function requestAllPermissions() {
       btnRequestPermissions.disabled = true;
       btnRequestPermissions.textContent = "Meminta izin...";
-
       await requestGeolocationPermission();
       await requestNotificationPermission();
-      await requestClipboardPermission();
-      await requestOptionalCameraPermission();
-      await refreshPermissionStatus();
-
       localStorage.setItem("pwa_permissions_checked_at", String(Date.now()));
       btnRequestPermissions.disabled = false;
       btnRequestPermissions.textContent = "Aktifkan Izin";
+      permissionBox.classList.remove("show");
     }
 
     function shouldShowPermissionBox() {
@@ -577,12 +500,17 @@
 
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
+    window.addEventListener("resize", applyOrientationPolicy);
+    window.addEventListener("orientationchange", function () {
+      setTimeout(applyOrientationPolicy, 250);
+    });
+
     updateOnlineStatus();
+    applyOrientationPolicy();
 
     frame.addEventListener("load", function () {
       setTimeout(hideSplash, 500);
-      setTimeout(async function () {
-        await refreshPermissionStatus();
+      setTimeout(function () {
         if (shouldShowPermissionBox()) {
           permissionBox.classList.add("show");
         }
@@ -609,6 +537,7 @@
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       deferredPrompt = null;
+      applyOrientationPolicy();
     });
 
     btnCloseInstall.addEventListener("click", function () {
@@ -626,6 +555,7 @@
     window.addEventListener("appinstalled", function () {
       deferredPrompt = null;
       installBox.classList.remove("show");
+      applyOrientationPolicy();
     });
 
     if ("serviceWorker" in navigator) {
