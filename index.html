@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-  >
-  <meta name="theme-color" content="#f97316">
-  <meta name="description" content="SISFO AHIS - PWA Web App">
-
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <meta name="theme-color" content="#f97316" />
+  <meta name="description" content="SISFO AHIS - PWA Web App" />
   <title>SISFO AHIS</title>
 
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+  <!-- Default mobile portrait. Tablet/laptop otomatis memakai manifest orientation:any. -->
+  <link id="appManifest" rel="manifest" href="./manifest-mobile.webmanifest" />
+  <script>
+    (function () {
+      var isTabletOrDesktop = Math.min(screen.width || innerWidth, screen.height || innerHeight) >= 768;
+      if (isTabletOrDesktop) {
+        document.getElementById("appManifest").setAttribute("href", "./manifest.webmanifest");
+      }
+    })();
+  </script>
+
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
 
   <style>
     :root {
@@ -23,10 +32,6 @@
       --ink: #0f172a;
       --muted: #64748b;
       --line: #e2e8f0;
-      --safe-top: env(safe-area-inset-top);
-      --safe-bottom: env(safe-area-inset-bottom);
-      --safe-left: env(safe-area-inset-left);
-      --safe-right: env(safe-area-inset-right);
       --shadow: 0 18px 45px rgba(15, 23, 42, .12);
     }
 
@@ -40,35 +45,40 @@
       width: 100%;
       height: 100%;
       margin: 0;
+      padding: 0;
       overflow: hidden;
-      background:
-        radial-gradient(circle at top left, rgba(249, 115, 22, .14), transparent 32%),
-        linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
+      background: #ffffff;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--ink);
       overscroll-behavior: none;
       touch-action: manipulation;
     }
 
+    /*
+      FIX SISI ATAS / BAWAH TEBAL:
+      Padding safe-area dihapus dari wrapper.
+      Sebelumnya env(safe-area-inset-top/bottom) membuat area atas dan bawah terlihat terlalu tebal.
+    */
     .app-shell {
-      width: 100%;
-      height: 100%;
-      position: relative;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100dvh;
       overflow: hidden;
       background: #ffffff;
-      padding:
-        var(--safe-top)
-        var(--safe-right)
-        var(--safe-bottom)
-        var(--safe-left);
+      padding: 0;
+      margin: 0;
     }
 
     .app-frame {
       width: 100%;
       height: 100%;
+      min-height: 100dvh;
       border: 0;
       display: block;
       background: #ffffff;
+      padding: 0;
+      margin: 0;
     }
 
     .splash {
@@ -95,7 +105,7 @@
       width: min(420px, 94vw);
       padding: 28px 24px;
       border-radius: 28px;
-      background: rgba(255, 255, 255, .88);
+      background: rgba(255, 255, 255, .9);
       border: 1px solid rgba(226, 232, 240, .88);
       box-shadow: var(--shadow);
       text-align: center;
@@ -149,7 +159,7 @@
     .top-alert {
       position: fixed;
       left: 50%;
-      top: calc(14px + var(--safe-top));
+      top: 14px;
       transform: translateX(-50%);
       z-index: 80;
       width: min(620px, calc(100vw - 24px));
@@ -197,13 +207,13 @@
     }
 
     .install-box {
-      right: calc(14px + var(--safe-right));
-      bottom: calc(14px + var(--safe-bottom));
+      right: 14px;
+      bottom: 14px;
     }
 
     .permission-box {
-      left: calc(14px + var(--safe-left));
-      bottom: calc(14px + var(--safe-bottom));
+      left: 14px;
+      bottom: 14px;
     }
 
     .install-box.show,
@@ -303,9 +313,9 @@
     }
 
     /*
-      ATURAN ROTASI:
-      - HP/mobile kecil hanya portrait.
-      - Tablet/laptop bisa portrait maupun landscape.
+      MOBILE DIPATENKAN PORTRAIT:
+      Jika browser tetap memaksa landscape, isi aplikasi disembunyikan
+      dan tampil instruksi untuk kembali portrait.
     */
     @media (max-width: 767px) and (orientation: landscape) {
       .rotate-blocker {
@@ -330,9 +340,9 @@
     @media (max-width: 720px) {
       .permission-box,
       .install-box {
-        left: calc(12px + var(--safe-left));
-        right: calc(12px + var(--safe-right));
-        bottom: calc(12px + var(--safe-bottom));
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
         max-width: none;
       }
     }
@@ -398,7 +408,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.06.19.02";
+    const APP_VERSION = "2026.06.19.03";
     const frame = document.getElementById("appFrame");
     const splash = document.getElementById("splash");
     const offlineAlert = document.getElementById("offlineAlert");
@@ -416,29 +426,22 @@
     let newWorkerWaiting = null;
     let splashTimer = null;
 
-    function isSmallMobile() {
+    function isMobilePortraitLocked() {
       return Math.min(window.innerWidth, window.innerHeight) < 768;
     }
 
     async function applyOrientationPolicy() {
-      /*
-        Browser/PWA tidak selalu mengizinkan orientation.lock().
-        Karena itu:
-        - Manifest dibuat orientation any.
-        - Tablet/laptop bebas rotasi.
-        - Mobile kecil dibantu lock portrait jika browser mendukung.
-        - CSS rotate blocker menjadi fallback saat HP diputar landscape.
-      */
       try {
         if (screen.orientation && screen.orientation.lock) {
-          if (isSmallMobile()) {
-            await screen.orientation.lock("portrait");
+          if (isMobilePortraitLocked()) {
+            await screen.orientation.lock("portrait-primary");
           } else {
             if (screen.orientation.unlock) screen.orientation.unlock();
           }
         }
       } catch (err) {
-        // Diabaikan. CSS blocker tetap menjadi fallback.
+        // Sebagian browser hanya mengizinkan lock setelah PWA di-install.
+        // Fallback CSS tetap menjaga mobile agar tidak menampilkan layout landscape.
       }
     }
 
