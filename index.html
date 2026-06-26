@@ -520,6 +520,185 @@
     }
 
 
+
+    .security-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 65;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, .22), transparent 36%),
+        linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+
+    .security-gate.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .security-card {
+      width: min(520px, 96vw);
+      max-height: calc(100dvh - 34px);
+      overflow: auto;
+      border-radius: 30px;
+      padding: 24px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(254, 215, 170, .95);
+      box-shadow: 0 22px 55px rgba(15,23,42,.16);
+      backdrop-filter: blur(18px);
+    }
+
+    .security-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid rgba(254, 215, 170, .9);
+      box-shadow: 0 14px 32px rgba(249,115,22,.18);
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .security-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .security-title {
+      margin: 0;
+      text-align: center;
+      font-size: 1.32rem;
+      font-weight: 950;
+      letter-spacing: -.02em;
+      color: #7c2d12;
+    }
+
+    .security-subtitle {
+      margin: 8px auto 18px;
+      text-align: center;
+      color: #64748b;
+      font-size: .94rem;
+      line-height: 1.5;
+      max-width: 420px;
+      font-weight: 650;
+    }
+
+    .security-status {
+      border-radius: 20px;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      padding: 12px;
+      color: #7c2d12;
+      font-size: .88rem;
+      line-height: 1.48;
+      font-weight: 700;
+      margin: 12px 0;
+      white-space: pre-line;
+    }
+
+    .security-status.danger {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .security-status.success {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .security-list {
+      margin: 14px 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .security-list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: #475569;
+      font-size: .86rem;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    .security-list li::before {
+      content: "✓";
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #ffedd5;
+      color: #9a3412;
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+      font-size: .72rem;
+      margin-top: 1px;
+    }
+
+    .security-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .security-btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: .92rem;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .security-btn:active {
+      transform: scale(.98);
+    }
+
+    .security-btn:disabled {
+      opacity: .68;
+      cursor: not-allowed;
+    }
+
+    .security-btn.primary {
+      flex: 1;
+      color: #fff;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      box-shadow: 0 12px 26px rgba(249,115,22,.22);
+    }
+
+    .security-btn.light {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    @media (max-width: 520px) {
+      .security-actions {
+        flex-direction: column;
+      }
+
+      .security-btn {
+        width: 100%;
+      }
+    }
+
+
   </style>
 </head>
 
@@ -529,12 +708,46 @@
       id="appFrame"
       class="app-frame"
       title="SISFO AHIS"
-      src="https://script.google.com/a/~/macros/s/AKfycbytGPvOxJSwIR7tsbPwq2CsgXCvRBOUnU0SbE3acmPjRQs8EIyRa2gYQhjamzwHCAGy/exec"
+      src="about:blank"
+      data-src="https://script.google.com/a/~/macros/s/AKfycbytGPvOxJSwIR7tsbPwq2CsgXCvRBOUnU0SbE3acmPjRQs8EIyRa2gYQhjamzwHCAGy/exec"
       allow="geolocation *; notifications *; camera *; microphone *; clipboard-read *; clipboard-write *; fullscreen *; accelerometer *; gyroscope *; magnetometer *"
       allowfullscreen
       referrerpolicy="strict-origin-when-cross-origin">
     </iframe>
   </div>
+
+
+  <div class="security-gate" id="securityGate">
+    <div class="security-card">
+      <div class="security-logo">
+        <img src="https://zakhyzulfandi-coder.github.io/abuhurairah/icons/icon-192.png" alt="Logo MTs Abu Hurairah">
+      </div>
+      <h2 class="security-title">Pemeriksaan Keamanan Lokasi</h2>
+      <p class="security-subtitle">
+        Sebelum SISFO AHIS dibuka, sistem akan memeriksa sinyal GPS, indikasi lokasi palsu, dan jaringan VPN/proxy.
+      </p>
+
+      <ul class="security-list">
+        <li>GPS harus aktif, akurasi normal, dan tidak terlalu statis.</li>
+        <li>Jaringan VPN, proxy, TOR, hosting, atau anonymizer akan diblokir.</li>
+        <li>Jika terindikasi aplikasi lokasi palsu, aplikasi tidak akan dibuka.</li>
+      </ul>
+
+      <div class="security-status" id="securityStatus">
+        Tekan tombol pemeriksaan untuk membuka aplikasi.
+      </div>
+
+      <div class="security-actions">
+        <button type="button" class="security-btn primary" id="btnSecurityStart">
+          Mulai Pemeriksaan
+        </button>
+        <button type="button" class="security-btn light" id="btnSecurityRetry" style="display:none">
+          Coba Lagi
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <div class="splash" id="splash">
     <div class="splash-card">
@@ -582,9 +795,14 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.06.20.01";
+    const APP_VERSION = "2026.06.26.02-security-gate";
     const frame = document.getElementById("appFrame");
     const splash = document.getElementById("splash");
+    const securityGate = document.getElementById("securityGate");
+    const securityStatus = document.getElementById("securityStatus");
+    const btnSecurityStart = document.getElementById("btnSecurityStart");
+    const btnSecurityRetry = document.getElementById("btnSecurityRetry");
+    const SECURITY_APP_URL = frame ? (frame.dataset.src || frame.getAttribute("data-src")) : "";
     const offlineAlert = document.getElementById("offlineAlert");
     const updateAlert = document.getElementById("updateAlert");
     const installBox = document.getElementById("installBox");
@@ -623,6 +841,376 @@
       clearTimeout(splashTimer);
       splash.classList.add("hide");
     }
+
+
+    /*******************************************************
+     * SECURITY GATE GITHUB / VERCEL WRAPPER
+     * Pemeriksaan sebelum iframe Apps Script dimuat.
+     *******************************************************/
+    const SECURITY_CONFIG = {
+      sampleCount: 3,
+      sampleDurationMs: 6000,
+      maxAccuracyMeter: 80,
+      staticToleranceMeter: 0.3,
+      minSpreadMeter: 0.7,
+      expectedCountryCode: "ID",
+      blockIfIpCheckFails: true,
+      vpnKeywords: [
+        "vpn", "proxy", "tor", "hosting", "host", "cloud", "datacenter",
+        "digitalocean", "amazon", "aws", "google cloud", "microsoft", "azure",
+        "oracle", "ovh", "hetzner", "linode", "vultr", "contabo", "alibaba"
+      ]
+    };
+
+    function securityLog(message, type) {
+      if (!securityStatus) return;
+      securityStatus.classList.remove("danger", "success");
+      if (type) securityStatus.classList.add(type);
+      securityStatus.textContent = message;
+    }
+
+    function securitySetBusy(isBusy) {
+      if (btnSecurityStart) btnSecurityStart.disabled = !!isBusy;
+      if (btnSecurityRetry) btnSecurityRetry.disabled = !!isBusy;
+    }
+
+    function securitySleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function securityGetPosition() {
+      return new Promise(function (resolve, reject) {
+        if (!navigator.geolocation) {
+          reject(new Error("Browser tidak mendukung GPS/geolocation."));
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0
+        });
+      });
+    }
+
+    function securityHaversine(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const toRad = v => Number(v) * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    }
+
+    async function securityTakeGpsSamples() {
+      const samples = [];
+      const count = SECURITY_CONFIG.sampleCount;
+      const gap = count > 1 ? Math.ceil(SECURITY_CONFIG.sampleDurationMs / (count - 1)) : 0;
+
+      for (let i = 0; i < count; i++) {
+        securityLog("Memeriksa sinyal GPS " + (i + 1) + "/" + count + "...\nJangan tutup aplikasi.", "");
+
+        const pos = await securityGetPosition();
+        const sample = {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          timestamp: Date.now()
+        };
+
+        samples.push(sample);
+
+        if (i < count - 1) {
+          await securitySleep(gap);
+        }
+      }
+
+      return samples;
+    }
+
+    function securityAnalyzeGps(samples) {
+      if (!Array.isArray(samples) || samples.length < SECURITY_CONFIG.sampleCount) {
+        return {
+          ok: false,
+          reason: "Sinyal GPS tidak cukup. Sistem gagal mengambil sampel lokasi secara lengkap."
+        };
+      }
+
+      let maxSpread = 0;
+      let maxAccuracy = 0;
+      const coord7 = new Set();
+      const coord6 = new Set();
+      const accSet = new Set();
+
+      samples.forEach((s, i) => {
+        const lat = Number(s.latitude);
+        const lon = Number(s.longitude);
+        const acc = Number(s.accuracy);
+
+        if (Number.isNaN(lat) || Number.isNaN(lon)) {
+          throw new Error("Sampel GPS ke-" + (i + 1) + " tidak valid.");
+        }
+
+        if (!acc || Number.isNaN(acc)) {
+          throw new Error("Akurasi GPS tidak terbaca. Ini termasuk sinyal GPS tidak normal.");
+        }
+
+        if (acc > maxAccuracy) maxAccuracy = acc;
+
+        coord7.add(lat.toFixed(7) + "," + lon.toFixed(7));
+        coord6.add(lat.toFixed(6) + "," + lon.toFixed(6));
+        accSet.add(String(Math.round(acc * 10) / 10));
+      });
+
+      for (let i = 0; i < samples.length; i++) {
+        for (let j = i + 1; j < samples.length; j++) {
+          const d = securityHaversine(
+            samples[i].latitude,
+            samples[i].longitude,
+            samples[j].latitude,
+            samples[j].longitude
+          );
+          if (d > maxSpread) maxSpread = d;
+        }
+      }
+
+      if (maxAccuracy > SECURITY_CONFIG.maxAccuracyMeter) {
+        return {
+          ok: false,
+          reason: "Sinyal GPS tidak normal. Akurasi terlalu rendah (" + Math.round(maxAccuracy) + " meter)."
+        };
+      }
+
+      if (coord7.size <= 1) {
+        return {
+          ok: false,
+          reason: "Sinyal GPS tidak normal. Semua sampel koordinat identik. Terdeteksi indikasi aplikasi lokasi palsu/fake GPS."
+        };
+      }
+
+      if (maxSpread <= SECURITY_CONFIG.staticToleranceMeter) {
+        return {
+          ok: false,
+          reason: "Sinyal GPS terlalu statis (" + maxSpread.toFixed(2) + " meter). Terdeteksi indikasi aplikasi GPS palsu."
+        };
+      }
+
+      if (coord6.size <= 1 && maxSpread < SECURITY_CONFIG.minSpreadMeter && accSet.size <= 1) {
+        return {
+          ok: false,
+          reason: "Pola GPS terlalu sempurna dan tidak wajar. Matikan aplikasi lokasi palsu lalu coba lagi."
+        };
+      }
+
+      if (navigator.webdriver) {
+        return {
+          ok: false,
+          reason: "Browser automation terdeteksi. Akses aplikasi diblokir."
+        };
+      }
+
+      return {
+        ok: true,
+        spread: maxSpread,
+        maxAccuracy: maxAccuracy,
+        unique: coord7.size
+      };
+    }
+
+    async function securityFetchJson(url, timeoutMs) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs || 8000);
+
+      try {
+        const res = await fetch(url, {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return await res.json();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function securityFetchIpInfo() {
+      const providers = [
+        "https://ipwho.is/?security=1",
+        "https://ipapi.co/json/"
+      ];
+
+      let lastError = null;
+
+      for (const url of providers) {
+        try {
+          return await securityFetchJson(url, 8500);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("Pemeriksaan jaringan gagal.");
+    }
+
+    function securityHasKeyword(text) {
+      text = String(text || "").toLowerCase();
+      return SECURITY_CONFIG.vpnKeywords.some(k => text.includes(k));
+    }
+
+    function securityAnalyzeIp(data) {
+      if (!data || typeof data !== "object") {
+        return {
+          ok: false,
+          reason: "Data jaringan tidak valid. Pemeriksaan VPN/proxy gagal."
+        };
+      }
+
+      const country =
+        data.country_code ||
+        data.countryCode ||
+        data.country ||
+        "";
+
+      if (country && SECURITY_CONFIG.expectedCountryCode && String(country).toUpperCase() !== SECURITY_CONFIG.expectedCountryCode) {
+        return {
+          ok: false,
+          reason: "Jaringan terdeteksi bukan dari Indonesia (" + country + "). Matikan VPN/proxy lalu coba lagi."
+        };
+      }
+
+      const sec = data.security || data.privacy || {};
+      const badFlags = [
+        "vpn",
+        "proxy",
+        "tor",
+        "relay",
+        "hosting",
+        "anonymous",
+        "anonymizer"
+      ];
+
+      for (const key of badFlags) {
+        if (sec && (sec[key] === true || String(sec[key]).toLowerCase() === "true")) {
+          return {
+            ok: false,
+            reason: "Jaringan VPN/proxy/anonymizer terdeteksi (" + key + "). Matikan VPN lalu coba lagi."
+          };
+        }
+      }
+
+      const connection = data.connection || {};
+      const networkText = [
+        data.org,
+        data.asn,
+        data.isp,
+        connection.org,
+        connection.isp,
+        connection.asn,
+        connection.domain
+      ].filter(Boolean).join(" ");
+
+      if (securityHasKeyword(networkText)) {
+        return {
+          ok: false,
+          reason: "Jaringan terindikasi memakai VPN/proxy/hosting: " + networkText.substring(0, 90)
+        };
+      }
+
+      return {
+        ok: true,
+        country: country || "-",
+        network: networkText || "-"
+      };
+    }
+
+    function securityAllowApp() {
+      securityLog("Pemeriksaan aman. Aplikasi sedang dibuka...", "success");
+
+      if (securityGate) {
+        securityGate.classList.add("hide");
+      }
+
+      if (frame && !frame.src.includes("script.google.com")) {
+        frame.src = SECURITY_APP_URL;
+      }
+    }
+
+    function securityBlock(reason) {
+      securityLog(
+        "AKSES DIBLOKIR\n\n" +
+        reason +
+        "\n\nMatikan VPN/proxy/aplikasi lokasi palsu, aktifkan GPS asli, lalu tekan Coba Lagi.",
+        "danger"
+      );
+
+      if (btnSecurityRetry) {
+        btnSecurityRetry.style.display = "inline-block";
+      }
+
+      if (frame) {
+        frame.src = "about:blank";
+      }
+    }
+
+    async function securityRunGate() {
+      securitySetBusy(true);
+      if (btnSecurityRetry) btnSecurityRetry.style.display = "none";
+
+      try {
+        if (!navigator.onLine) {
+          throw new Error("Perangkat sedang offline. Pemeriksaan keamanan jaringan tidak dapat dilakukan.");
+        }
+
+        securityLog("Memeriksa jaringan dan VPN/proxy...", "");
+        const ipInfo = await securityFetchIpInfo();
+        const ipResult = securityAnalyzeIp(ipInfo);
+
+        if (!ipResult.ok) {
+          securityBlock(ipResult.reason);
+          return;
+        }
+
+        securityLog("Jaringan aman. Memeriksa sinyal GPS...", "");
+        const samples = await securityTakeGpsSamples();
+        const gpsResult = securityAnalyzeGps(samples);
+
+        if (!gpsResult.ok) {
+          securityBlock(gpsResult.reason);
+          return;
+        }
+
+        localStorage.setItem("ahis_security_gate_passed_at", String(Date.now()));
+        localStorage.setItem("ahis_security_gate_last_result", JSON.stringify({
+          at: new Date().toISOString(),
+          gps: gpsResult,
+          ip: ipResult
+        }));
+
+        securityAllowApp();
+
+      } catch (err) {
+        if (SECURITY_CONFIG.blockIfIpCheckFails) {
+          securityBlock(err && err.message ? err.message : String(err));
+        } else {
+          securityAllowApp();
+        }
+      } finally {
+        securitySetBusy(false);
+      }
+    }
+
+    if (btnSecurityStart) {
+      btnSecurityStart.addEventListener("click", securityRunGate);
+    }
+
+    if (btnSecurityRetry) {
+      btnSecurityRetry.addEventListener("click", securityRunGate);
+    }
+
 
     function updateOnlineStatus() {
       offlineAlert.classList.toggle("show", !navigator.onLine);
@@ -687,14 +1275,17 @@
 
     frame.addEventListener("load", function () {
       setTimeout(hideSplash, 500);
+
+      // Permission box hanya tampil setelah aplikasi utama benar-benar dimuat,
+      // bukan saat iframe masih about:blank pada security gate.
       setTimeout(function () {
-        if (shouldShowPermissionBox()) {
+        if (frame && String(frame.src || "").indexOf("script.google.com") !== -1 && shouldShowPermissionBox()) {
           permissionBox.classList.add("show");
         }
       }, 900);
     });
 
-    splashTimer = setTimeout(hideSplash, 9000);
+    splashTimer = setTimeout(hideSplash, 1200);
 
     window.addEventListener("beforeinstallprompt", function (event) {
       event.preventDefault();
