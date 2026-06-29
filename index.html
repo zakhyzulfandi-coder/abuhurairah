@@ -520,6 +520,166 @@
     }
 
 
+  
+    /* ===== OFFLINE SCREEN CUSTOM SISFO AHIS ===== */
+    .offline-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, .22), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(251, 191, 36, .16), transparent 36%),
+        linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
+      color: #0f172a;
+    }
+
+    .offline-screen.show {
+      display: flex;
+    }
+
+    .offline-card {
+      width: min(430px, 94vw);
+      border-radius: 30px;
+      border: 1px solid rgba(254, 215, 170, .95);
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 26px 70px rgba(15, 23, 42, .16);
+      padding: 28px 24px;
+      text-align: center;
+      backdrop-filter: blur(18px);
+    }
+
+    .offline-logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 25px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      padding: 8px;
+      background: #ffffff;
+      border: 1px solid #fed7aa;
+      box-shadow: 0 18px 34px rgba(249, 115, 22, .18);
+      overflow: hidden;
+    }
+
+    .offline-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .offline-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, #f97316, #facc15);
+      color: #111827;
+      font-size: 1.35rem;
+      box-shadow: 0 14px 30px rgba(249, 115, 22, .24);
+    }
+
+    .offline-title {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1.18;
+      font-weight: 950;
+      letter-spacing: -.03em;
+    }
+
+    .offline-text {
+      margin: 10px 0 16px;
+      color: #64748b;
+      font-size: .95rem;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .offline-status {
+      border: 1px solid #fed7aa;
+      border-radius: 18px;
+      background: #fff7ed;
+      padding: 11px 12px;
+      color: #9a3412;
+      font-size: .82rem;
+      font-weight: 850;
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .offline-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 7px;
+      background: #ef4444;
+      box-shadow: 0 0 0 6px rgba(239, 68, 68, .12);
+      vertical-align: middle;
+    }
+
+    .offline-dot.online {
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34, 197, 94, .12);
+    }
+
+    .offline-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .offline-btn {
+      border: 0;
+      border-radius: 15px;
+      padding: 12px 15px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .16s ease;
+    }
+
+    .offline-btn-primary {
+      color: #111827;
+      background: linear-gradient(135deg, #f97316, #facc15);
+      box-shadow: 0 12px 26px rgba(249, 115, 22, .22);
+    }
+
+    .offline-btn-light {
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    .offline-small {
+      margin-top: 13px;
+      color: #94a3b8;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 520px) {
+      .offline-card {
+        padding: 24px 20px;
+        border-radius: 26px;
+      }
+
+      .offline-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .offline-btn {
+        width: 100%;
+      }
+    }
+
   </style>
 </head>
 
@@ -529,7 +689,8 @@
       id="appFrame"
       class="app-frame"
       title="SISFO AHIS"
-      src="https://script.google.com/a/~/macros/s/AKfycbytGPvOxJSwIR7tsbPwq2CsgXCvRBOUnU0SbE3acmPjRQs8EIyRa2gYQhjamzwHCAGy/exec"
+      data-src="https://script.google.com/a/~/macros/s/AKfycbytGPvOxJSwIR7tsbPwq2CsgXCvRBOUnU0SbE3acmPjRQs8EIyRa2gYQhjamzwHCAGy/exec"
+      src="about:blank"
       allow="geolocation *; notifications *; camera *; microphone *; clipboard-read *; clipboard-write *; fullscreen *; accelerometer *; gyroscope *; magnetometer *"
       allowfullscreen
       referrerpolicy="strict-origin-when-cross-origin">
@@ -563,6 +724,29 @@
     <button type="button" id="btnApplyUpdate">Update</button>
   </div>
 
+
+  <div class="offline-screen" id="offlineScreen" aria-live="polite">
+    <div class="offline-card">
+      <div class="offline-logo">
+        <img src="https://zakhyzulfandi-coder.github.io/abuhurairah/icons/icon-192.png" alt="Logo MTs Abu Hurairah" />
+      </div>
+      <div class="offline-icon">⚡</div>
+      <h1 class="offline-title">Anda Sedang Offline</h1>
+      <p class="offline-text">
+        SISFO AHIS membutuhkan internet untuk membuka data dari Google Apps Script dan Spreadsheet.
+      </p>
+      <div class="offline-status" id="offlineStatusText">
+        <span class="offline-dot"></span>
+        Tetap standby. Sistem akan membuka kembali otomatis setelah internet tersambung.
+      </div>
+      <div class="offline-actions">
+        <button class="offline-btn offline-btn-primary" type="button" onclick="offlineTryReload()">Coba Muat Ulang</button>
+        <button class="offline-btn offline-btn-light" type="button" onclick="offlineCheckNow()">Cek Koneksi</button>
+      </div>
+      <div class="offline-small" id="offlineLastCheck">Menunggu koneksi internet...</div>
+    </div>
+  </div>
+
   <div class="install-box" id="installBox">
     <p class="box-title">Install SISFO AHIS</p>
     <p class="box-text">Tambahkan aplikasi ke layar utama agar lebih cepat dibuka seperti aplikasi biasa.</p>
@@ -582,10 +766,16 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.06.20.01";
+    const APP_VERSION = "2026.06.30.01-offline-auto-reload";
     const frame = document.getElementById("appFrame");
+    const APP_TARGET_URL = frame ? (frame.getAttribute("data-src") || frame.getAttribute("src") || "") : "";
     const splash = document.getElementById("splash");
     const offlineAlert = document.getElementById("offlineAlert");
+    const offlineScreen = document.getElementById("offlineScreen");
+    const offlineStatusText = document.getElementById("offlineStatusText");
+    const offlineLastCheck = document.getElementById("offlineLastCheck");
+    let offlineEverDetected = !navigator.onLine;
+    let offlineReloadScheduled = false;
     const updateAlert = document.getElementById("updateAlert");
     const installBox = document.getElementById("installBox");
     const permissionBox = document.getElementById("permissionBox");
@@ -624,8 +814,85 @@
       splash.classList.add("hide");
     }
 
+    function offlineSetFrameBlank() {
+      if (!frame) return;
+      try {
+        frame.style.visibility = "hidden";
+        if (frame.getAttribute("src") !== "about:blank") {
+          frame.setAttribute("src", "about:blank");
+        }
+      } catch (err) {}
+    }
+
+    function offlineLoadFrameIfOnline() {
+      if (!frame || !navigator.onLine) return;
+      try {
+        if (!frame.getAttribute("src") || frame.getAttribute("src") === "about:blank") {
+          frame.setAttribute("src", APP_TARGET_URL);
+        }
+        frame.style.visibility = "visible";
+      } catch (err) {}
+    }
+
+    function offlineShowPage() {
+      offlineEverDetected = true;
+      offlineReloadScheduled = false;
+      if (offlineAlert) offlineAlert.classList.add("show");
+      if (offlineScreen) offlineScreen.classList.add("show");
+      if (offlineStatusText) {
+        offlineStatusText.innerHTML = '<span class="offline-dot"></span>Tetap standby. Sistem akan membuka kembali otomatis setelah internet tersambung.';
+      }
+      if (offlineLastCheck) offlineLastCheck.textContent = "Status: offline • " + new Date().toLocaleTimeString("id-ID");
+      offlineSetFrameBlank();
+      hideSplash();
+    }
+
+    function offlineHidePageAndReload() {
+      if (offlineStatusText) {
+        offlineStatusText.innerHTML = '<span class="offline-dot online"></span>Koneksi kembali online. Aplikasi sedang dimuat ulang otomatis...';
+      }
+      if (offlineLastCheck) offlineLastCheck.textContent = "Status: online • memuat ulang...";
+      if (offlineReloadScheduled) return;
+      offlineReloadScheduled = true;
+
+      setTimeout(function () {
+        location.reload();
+      }, 650);
+    }
+
+    function offlineTryReload() {
+      if (navigator.onLine) {
+        offlineHidePageAndReload();
+      } else {
+        offlineShowPage();
+      }
+    }
+
+    function offlineCheckNow() {
+      if (navigator.onLine) {
+        offlineHidePageAndReload();
+      } else {
+        if (offlineLastCheck) offlineLastCheck.textContent = "Masih offline • " + new Date().toLocaleTimeString("id-ID");
+      }
+    }
+
     function updateOnlineStatus() {
-      offlineAlert.classList.toggle("show", !navigator.onLine);
+      const online = navigator.onLine;
+
+      if (offlineAlert) offlineAlert.classList.toggle("show", !online);
+
+      if (!online) {
+        offlineShowPage();
+        return;
+      }
+
+      if (offlineEverDetected) {
+        offlineHidePageAndReload();
+        return;
+      }
+
+      if (offlineScreen) offlineScreen.classList.remove("show");
+      offlineLoadFrameIfOnline();
     }
 
     function requestGeolocationPermission() {
@@ -675,6 +942,45 @@
       return Date.now() - dismissedAt > oneDay && Date.now() - checkedAt > oneDay;
     }
 
+
+    /*******************************************************
+     * GITHUB GPS BRIDGE - TANPA GATE AWAL
+     * GitHub/Vercel hanya menjadi jembatan GPS saat Apps Script meminta lokasi.
+     *******************************************************/
+    const GPS_BRIDGE_CONFIG = {
+      source: "github_wrapper_v1",
+      sampleCount: 3,
+      sampleDurationMs: 6000,
+      maxAccuracyMeter: 80,
+      staticToleranceMeter: 0.3,
+      minSpreadMeter: 0.7,
+      expectedCountryCode: "ID",
+      blockVpnProxy: true,
+      blockIfIpCheckFails: false,
+      vpnKeywords: ["vpn","proxy","tor","hosting","host","cloud","datacenter","digitalocean","amazon","aws","google cloud","microsoft","azure","oracle","ovh","hetzner","linode","vultr","contabo","alibaba"]
+    };
+    function gpsBridgePost(targetWindow, requestId, payload){ try{ targetWindow && targetWindow.postMessage(Object.assign({type:"AHIS_GPS_BRIDGE_RESPONSE",requestId:requestId},payload),"*"); }catch(e){ console.warn(e); } }
+    function gpsBridgeProgress(targetWindow, requestId, message){ gpsBridgePost(targetWindow,requestId,{status:"progress",message:message}); }
+    function gpsBridgeSleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+    function gpsBridgeGetPosition(){ return new Promise(function(resolve,reject){ if(!navigator.geolocation){ reject(new Error("Browser tidak mendukung GPS/geolocation.")); return; } navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:20000,maximumAge:0}); }); }
+    function gpsBridgeHaversine(lat1,lon1,lat2,lon2){ const R=6371000,toRad=v=>Number(v)*Math.PI/180,dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1); const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2; return R*(2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))); }
+    function gpsBridgeAnalyzeSamples(samples,cfg){ cfg=Object.assign({},GPS_BRIDGE_CONFIG,cfg||{}); samples=Array.isArray(samples)?samples:[]; if(samples.length<cfg.sampleCount) return {ok:false,abnormal:true,reason:"Sampel GPS tidak lengkap."}; let maxSpread=0,maxAccuracy=0; const coord7=new Set(),coord6=new Set(),accSet=new Set(); samples.forEach((s,i)=>{ const lat=Number(s.latitude),lon=Number(s.longitude),acc=Number(s.accuracy); if(Number.isNaN(lat)||Number.isNaN(lon)) throw new Error("Sampel GPS ke-"+(i+1)+" tidak valid."); if(!acc||Number.isNaN(acc)) throw new Error("Akurasi GPS tidak terbaca. Ini termasuk sinyal GPS tidak normal."); maxAccuracy=Math.max(maxAccuracy,acc); coord7.add(lat.toFixed(7)+","+lon.toFixed(7)); coord6.add(lat.toFixed(6)+","+lon.toFixed(6)); accSet.add(String(Math.round(acc*10)/10)); }); for(let i=0;i<samples.length;i++){ for(let j=i+1;j<samples.length;j++){ maxSpread=Math.max(maxSpread,gpsBridgeHaversine(samples[i].latitude,samples[i].longitude,samples[j].latitude,samples[j].longitude)); } } if(maxAccuracy>cfg.maxAccuracyMeter) return {ok:false,abnormal:true,spread:maxSpread,maxAccuracy:maxAccuracy,reason:"Sinyal GPS tidak normal. Akurasi terlalu rendah ("+Math.round(maxAccuracy)+" meter)."}; if(coord7.size<=1) return {ok:false,abnormal:true,spread:maxSpread,maxAccuracy:maxAccuracy,reason:"Sinyal GPS tidak normal. Semua sampel koordinat identik. Terdeteksi indikasi aplikasi lokasi palsu."}; if(maxSpread<=cfg.staticToleranceMeter) return {ok:false,abnormal:true,spread:maxSpread,maxAccuracy:maxAccuracy,reason:"Sinyal GPS terlalu statis ("+maxSpread.toFixed(2)+" meter). Terdeteksi indikasi aplikasi GPS palsu."}; if(coord6.size<=1 && maxSpread<cfg.minSpreadMeter && accSet.size<=1) return {ok:false,abnormal:true,spread:maxSpread,maxAccuracy:maxAccuracy,reason:"Pola GPS terlalu sempurna dan tidak wajar. Matikan aplikasi lokasi palsu lalu coba lagi."}; if(navigator.webdriver) return {ok:false,abnormal:true,spread:maxSpread,maxAccuracy:maxAccuracy,reason:"Browser automation terdeteksi."}; return {ok:true,abnormal:false,spread:maxSpread,maxAccuracy:maxAccuracy,unique7:coord7.size,unique6:coord6.size}; }
+    async function gpsBridgeTakeSamples(targetWindow,requestId,config){ const cfg=Object.assign({},GPS_BRIDGE_CONFIG,config||{}),samples=[],count=Math.max(1,Number(cfg.sampleCount||GPS_BRIDGE_CONFIG.sampleCount)),duration=Math.max(0,Number(cfg.sampleDurationMs||GPS_BRIDGE_CONFIG.sampleDurationMs)),gap=count>1?Math.ceil(duration/(count-1)):0; for(let i=0;i<count;i++){ gpsBridgeProgress(targetWindow,requestId,"Mengambil sinyal GPS real-time "+(i+1)+"/"+count+"..."); const pos=await gpsBridgeGetPosition(); samples.push({latitude:pos.coords.latitude,longitude:pos.coords.longitude,accuracy:pos.coords.accuracy,altitude:pos.coords.altitude,altitudeAccuracy:pos.coords.altitudeAccuracy,heading:pos.coords.heading,speed:pos.coords.speed,timestamp:new Date().toISOString(),source:GPS_BRIDGE_CONFIG.source}); if(i<count-1) await gpsBridgeSleep(gap); } return samples; }
+    async function gpsBridgeFetchJson(url,timeoutMs){ const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),timeoutMs||7500); try{ const res=await fetch(url,{method:"GET",cache:"no-store",signal:controller.signal}); if(!res.ok) throw new Error("HTTP "+res.status); return await res.json(); }finally{ clearTimeout(timer); } }
+    function gpsBridgeHasKeyword(text){ text=String(text||"").toLowerCase(); return GPS_BRIDGE_CONFIG.vpnKeywords.some(k=>text.includes(k)); }
+    function gpsBridgeAnalyzeNetwork(data){ data=data||{}; const country=data.country_code||data.countryCode||data.country||""; if(country&&GPS_BRIDGE_CONFIG.expectedCountryCode&&String(country).toUpperCase()!==GPS_BRIDGE_CONFIG.expectedCountryCode) return {ok:false,reason:"Jaringan terdeteksi bukan dari Indonesia ("+country+"). Matikan VPN/proxy lalu coba lagi.",country:country}; const sec=data.security||data.privacy||{}; for(const key of ["vpn","proxy","tor","relay","hosting","anonymous","anonymizer"]){ if(sec&&(sec[key]===true||String(sec[key]).toLowerCase()==="true")) return {ok:false,reason:"Jaringan VPN/proxy/anonymizer terdeteksi ("+key+"). Matikan VPN lalu coba lagi.",security:sec}; } const c=data.connection||{}; const network=[data.org,data.asn,data.isp,c.org,c.isp,c.asn,c.domain].filter(Boolean).join(" "); if(gpsBridgeHasKeyword(network)) return {ok:false,reason:"Jaringan terindikasi memakai VPN/proxy/hosting: "+network.substring(0,90),network:network}; return {ok:true,country:country||"-",network:network||"-"}; }
+    async function gpsBridgeCheckNetwork(){ const providers=["https://ipwho.is/?security=1","https://ipapi.co/json/"]; let lastErr=null; for(const url of providers){ try{ return gpsBridgeAnalyzeNetwork(await gpsBridgeFetchJson(url,7500)); }catch(e){ lastErr=e; } } if(GPS_BRIDGE_CONFIG.blockIfIpCheckFails) return {ok:false,reason:"Pemeriksaan jaringan gagal. VPN/proxy tidak dapat diverifikasi."}; return {ok:true,warning:"Pemeriksaan VPN/proxy gagal, tetapi tidak diblokir.",error:lastErr?String(lastErr.message||lastErr):""}; }
+    window.addEventListener("message",async function(event){ const data=event.data||{}; if(!data||data.type!=="AHIS_REQUEST_GPS_FROM_GITHUB") return; const requestId=data.requestId||String(Date.now()); const targetWindow=event.source||(frame?frame.contentWindow:null); const cfg=Object.assign({},GPS_BRIDGE_CONFIG,data.config||{}); try{ gpsBridgeProgress(targetWindow,requestId,"Memeriksa jaringan VPN/proxy..."); const network=await gpsBridgeCheckNetwork(); if(cfg.blockVpnProxy!==false&&!network.ok){ gpsBridgePost(targetWindow,requestId,{status:"blocked",ok:false,reason:network.reason||"Jaringan VPN/proxy terdeteksi.",network:network,bridgeSource:GPS_BRIDGE_CONFIG.source}); return; } const samples=await gpsBridgeTakeSamples(targetWindow,requestId,cfg); const analysis=gpsBridgeAnalyzeSamples(samples,cfg); if(!analysis.ok){ gpsBridgePost(targetWindow,requestId,{status:"blocked",ok:false,reason:analysis.reason||"Sinyal GPS tidak normal.",samples:samples,analysis:analysis,network:network,bridgeSource:GPS_BRIDGE_CONFIG.source}); return; } gpsBridgePost(targetWindow,requestId,{status:"success",ok:true,samples:samples,analysis:analysis,network:network,bridgeSource:GPS_BRIDGE_CONFIG.source,bridgeTimestamp:new Date().toISOString()}); }catch(err){ gpsBridgePost(targetWindow,requestId,{status:"error",ok:false,reason:err&&err.message?err.message:String(err),bridgeSource:GPS_BRIDGE_CONFIG.source,bridgeTimestamp:new Date().toISOString()}); } });
+
+
+    setInterval(function () {
+      if (!navigator.onLine) {
+        if (!offlineScreen || !offlineScreen.classList.contains("show")) offlineShowPage();
+      } else if (offlineScreen && offlineScreen.classList.contains("show")) {
+        offlineHidePageAndReload();
+      }
+    }, 2500);
+
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
     window.addEventListener("resize", applyOrientationPolicy);
@@ -683,15 +989,14 @@
     });
 
     updateOnlineStatus();
+    if (navigator.onLine) offlineLoadFrameIfOnline();
     applyOrientationPolicy();
 
     frame.addEventListener("load", function () {
       setTimeout(hideSplash, 500);
-      setTimeout(function () {
-        if (shouldShowPermissionBox()) {
-          permissionBox.classList.add("show");
-        }
-      }, 900);
+      // Izin lokasi tidak diminta setiap aplikasi dibuka.
+      // Izin akan muncul hanya saat user menekan Ambil Lokasi di menu Absensi.
+      setTimeout(function () {}, 900);
     });
 
     splashTimer = setTimeout(hideSplash, 9000);
