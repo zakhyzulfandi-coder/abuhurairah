@@ -2,65 +2,147 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f27a24" />
-  <title>Offline - SISFO AHIS MTS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#f97316" />
+  <title>Offline - SISFO AHIS</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(249,115,22,.22), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(251,191,36,.16), transparent 36%),
+        linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #0f172a;
+    }
+    body {
+      min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background:
-        radial-gradient(circle at top left, rgba(242, 122, 36, .14), transparent 34%),
-        linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #0f172a;
     }
     .card {
       width: min(430px, 94vw);
-      padding: 28px;
-      border-radius: 28px;
-      background: rgba(255,255,255,.9);
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 18px 45px rgba(15,23,42,.12);
+      border-radius: 30px;
+      border: 1px solid rgba(254,215,170,.95);
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 26px 70px rgba(15,23,42,.16);
+      padding: 28px 24px;
       text-align: center;
+      backdrop-filter: blur(18px);
     }
+    .logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 25px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid #fed7aa;
+      box-shadow: 0 18px 34px rgba(249,115,22,.18);
+      overflow: hidden;
+    }
+    .logo img { width: 100%; height: 100%; object-fit: contain; }
     .icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 24px;
-      margin: 0 auto 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      background: linear-gradient(135deg, #f27a24, #ffb84d);
-      font-size: 32px;
-      font-weight: 900;
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, #f97316, #facc15);
+      color: #111827;
+      font-size: 1.35rem;
+      box-shadow: 0 14px 30px rgba(249,115,22,.24);
     }
-    h1 { margin: 0; font-size: 1.35rem; font-weight: 900; }
-    p { margin: 10px 0 20px; color: #64748b; line-height: 1.5; font-weight: 650; }
+    h1 { margin: 0; font-size: 1.45rem; line-height: 1.18; font-weight: 950; letter-spacing: -.03em; }
+    p { margin: 10px 0 16px; color: #64748b; font-size: .95rem; font-weight: 700; line-height: 1.55; }
+    .status {
+      border: 1px solid #fed7aa;
+      border-radius: 18px;
+      background: #fff7ed;
+      padding: 11px 12px;
+      color: #9a3412;
+      font-size: .82rem;
+      font-weight: 850;
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 7px;
+      background: #ef4444;
+      box-shadow: 0 0 0 6px rgba(239,68,68,.12);
+      vertical-align: middle;
+    }
+    .dot.online {
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34,197,94,.12);
+    }
     button {
       border: 0;
-      border-radius: 14px;
-      padding: 12px 16px;
-      background: #f27a24;
-      color: white;
-      font-weight: 900;
+      border-radius: 15px;
+      padding: 12px 15px;
+      font-weight: 950;
       cursor: pointer;
+      color: #111827;
+      background: linear-gradient(135deg, #f97316, #facc15);
+      box-shadow: 0 12px 26px rgba(249,115,22,.22);
+      width: 100%;
     }
+    .small { margin-top: 13px; color: #94a3b8; font-size: .76rem; font-weight: 800; }
   </style>
 </head>
 <body>
   <main class="card">
-    <div class="icon">!</div>
-    <h1>Koneksi Internet Tidak Tersedia</h1>
+    <div class="logo"><img src="https://zakhyzulfandi-coder.github.io/abuhurairah/icons/icon-192.png" alt="Logo MTs Abu Hurairah"></div>
+    <div class="icon">⚡</div>
+    <h1>Anda Sedang Offline</h1>
     <p>SISFO AHIS membutuhkan internet untuk membuka data dari Google Apps Script dan Spreadsheet.</p>
-    <button type="button" onclick="location.reload()">Coba Muat Ulang</button>
+    <div class="status" id="status"><span class="dot"></span>Tetap standby. Sistem akan membuka kembali otomatis setelah internet tersambung.</div>
+    <button type="button" onclick="tryReload()">Coba Muat Ulang</button>
+    <div class="small" id="lastCheck">Menunggu koneksi internet...</div>
   </main>
+
+  <script>
+    let scheduled = false;
+
+    function tryReload() {
+      if (navigator.onLine) {
+        goOnline();
+      } else {
+        document.getElementById("lastCheck").textContent = "Masih offline • " + new Date().toLocaleTimeString("id-ID");
+      }
+    }
+
+    function goOnline() {
+      if (scheduled) return;
+      scheduled = true;
+      document.getElementById("status").innerHTML = '<span class="dot online"></span>Koneksi kembali online. Aplikasi sedang dimuat ulang otomatis...';
+      document.getElementById("lastCheck").textContent = "Status: online • memuat ulang...";
+      setTimeout(function () {
+        location.href = "./";
+      }, 650);
+    }
+
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", function () {
+      scheduled = false;
+      document.getElementById("status").innerHTML = '<span class="dot"></span>Tetap standby. Sistem akan membuka kembali otomatis setelah internet tersambung.';
+      document.getElementById("lastCheck").textContent = "Status: offline • " + new Date().toLocaleTimeString("id-ID");
+    });
+
+    setInterval(function () {
+      if (navigator.onLine) goOnline();
+    }, 2500);
+  </script>
 </body>
 </html>
