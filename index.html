@@ -758,7 +758,7 @@
 
   <div class="permission-box" id="permissionBox">
     <p class="box-title">Izin Aplikasi</p>
-    <p class="box-text">Aktifkan izin lokasi dan notifikasi agar fitur absensi berjalan lebih lancar.</p>
+    <p class="box-text">Aktifkan lokasi, notifikasi, sensor, dan getaran agar fitur absensi serta kompas kiblat berjalan dengan baik.</p>
     <div class="box-actions">
       <button type="button" class="btn-primary" id="btnRequestPermissions">Aktifkan Izin</button>
       <button type="button" class="btn-light" id="btnClosePermission">Tutup</button>
@@ -766,7 +766,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.06.30.01-offline-auto-reload";
+    const APP_VERSION = "2026.07.19.02-kiblat-vibrate-bridge";
     const frame = document.getElementById("appFrame");
     const APP_TARGET_URL = frame ? (frame.getAttribute("data-src") || frame.getAttribute("src") || "") : "";
     const splash = document.getElementById("splash");
@@ -924,15 +924,78 @@
       }
     }
 
+    const AHIS_HAPTIC_STORAGE_KEY = "ahis_haptic_bridge_enabled_v1";
+
+    function ahisNormalizeVibrationPattern(pattern) {
+      const source = Array.isArray(pattern) ? pattern : [pattern];
+      return source.slice(0, 20).map(function (value) {
+        const number = Math.round(Number(value) || 0);
+        return Math.max(0, Math.min(1000, number));
+      });
+    }
+
+    function ahisVibrationHasActivation() {
+      try {
+        if (!navigator.userActivation) return true;
+        return !!navigator.userActivation.hasBeenActive;
+      } catch (error) {
+        return true;
+      }
+    }
+
+    function ahisTryVibrate(pattern) {
+      const supported = typeof navigator.vibrate === "function";
+      const hasActivation = ahisVibrationHasActivation();
+      let ok = false;
+
+      if (supported && hasActivation) {
+        try {
+          ok = navigator.vibrate(ahisNormalizeVibrationPattern(pattern)) !== false;
+        } catch (error) {
+          ok = false;
+        }
+      }
+
+      if (ok) {
+        try { localStorage.setItem(AHIS_HAPTIC_STORAGE_KEY, "1"); } catch (error) {}
+      }
+
+      return {
+        ok: ok,
+        supported: supported,
+        hasActivation: hasActivation,
+        needsActivation: supported && !hasActivation
+      };
+    }
+
+    function ahisActivateVibrationFromButton() {
+      /* Harus dipanggil sebelum await karena click adalah user activation. */
+      const result = ahisTryVibrate([45, 35, 45]);
+      if (result.ok && frame && frame.contentWindow) {
+        try {
+          frame.contentWindow.postMessage({
+            type: "AHIS_VIBRATE_READY",
+            ok: true,
+            bridgeSource: "github_wrapper_haptic_v1"
+          }, "*");
+        } catch (error) {}
+      }
+      return result;
+    }
+
     async function requestAllPermissions() {
       btnRequestPermissions.disabled = true;
       btnRequestPermissions.textContent = "Meminta izin...";
+      const hapticResult = ahisActivateVibrationFromButton();
       await requestGeolocationPermission();
       await requestNotificationPermission();
       localStorage.setItem("pwa_permissions_checked_at", String(Date.now()));
       btnRequestPermissions.disabled = false;
-      btnRequestPermissions.textContent = "Aktifkan Izin";
-      permissionBox.classList.remove("show");
+      btnRequestPermissions.textContent = hapticResult.ok ? "Getaran Aktif" : "Aktifkan Izin";
+      setTimeout(function () {
+        btnRequestPermissions.textContent = "Aktifkan Izin";
+        permissionBox.classList.remove("show");
+      }, hapticResult.ok ? 650 : 1000);
     }
 
     function shouldShowPermissionBox() {
@@ -942,6 +1005,42 @@
       return Date.now() - dismissedAt > oneDay && Date.now() - checkedAt > oneDay;
     }
 
+
+    /*******************************************************
+     * GITHUB/VERSION PWA HAPTIC BRIDGE
+     * Apps Script berada di iframe lintas origin. Permintaan getaran
+     * diteruskan ke halaman wrapper paling atas melalui postMessage.
+     *******************************************************/
+    window.addEventListener("message", function (event) {
+      const data = event.data || {};
+      if (!data || data.type !== "AHIS_VIBRATE_REQUEST") return;
+
+      /* Hanya menerima permintaan dari iframe aplikasi yang sedang aktif. */
+      if (frame && event.source !== frame.contentWindow) return;
+
+      const result = ahisTryVibrate(data.pattern || [100, 70, 100]);
+
+      if (result.needsActivation && permissionBox) {
+        const title = permissionBox.querySelector(".box-title");
+        const text = permissionBox.querySelector(".box-text");
+        if (title) title.textContent = "Aktifkan Getaran Kiblat";
+        if (text) text.textContent = "Tekan Aktifkan Izin satu kali agar aplikasi dapat bergetar saat arah kiblat sudah tepat.";
+        permissionBox.classList.add("show");
+      }
+
+      try {
+        event.source && event.source.postMessage({
+          type: "AHIS_VIBRATE_RESPONSE",
+          requestId: data.requestId || "",
+          reason: data.reason || "",
+          ok: result.ok,
+          supported: result.supported,
+          hasActivation: result.hasActivation,
+          needsActivation: result.needsActivation,
+          bridgeSource: "github_wrapper_haptic_v1"
+        }, "*");
+      } catch (error) {}
+    }, false);
 
     /*******************************************************
      * GITHUB GPS BRIDGE - TANPA GATE AWAL
