@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- GITHUB/VERCEL WRAPPER: FIX CACHE APP SCRIPT INDEX 42 DAN VIEWPORT MOBILE -->
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -8,6 +9,9 @@
   />
   <meta name="theme-color" content="#f97316" />
   <meta name="description" content="SISFO AHIS - PWA Web App" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>SISFO AHIS</title>
 
   <!-- Default mobile portrait. Tablet/laptop otomatis memakai manifest orientation:any. -->
@@ -44,6 +48,7 @@
     body {
       width: 100%;
       height: 100%;
+      min-height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -52,6 +57,14 @@
       color: var(--ink);
       overscroll-behavior: none;
       touch-action: manipulation;
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: var(--app-viewport-height, 100dvh);
+      min-height: var(--app-viewport-height, 100dvh);
     }
 
     /*
@@ -63,7 +76,7 @@
       position: fixed;
       inset: 0;
       width: 100vw;
-      height: 100dvh;
+      height: var(--app-viewport-height, 100dvh);
       overflow: hidden;
       background: #ffffff;
       padding: 0;
@@ -71,9 +84,12 @@
     }
 
     .app-frame {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      min-height: 100dvh;
+      min-height: 0;
+      max-height: 100%;
       border: 0;
       display: block;
       background: #ffffff;
@@ -691,6 +707,7 @@
       title="SISFO AHIS"
       data-src="https://script.google.com/a/~/macros/s/AKfycbytGPvOxJSwIR7tsbPwq2CsgXCvRBOUnU0SbE3acmPjRQs8EIyRa2gYQhjamzwHCAGy/exec"
       src="about:blank"
+      scrolling="no"
       allow="geolocation; camera; microphone; gyroscope; accelerometer; magnetometer; clipboard-read; clipboard-write; fullscreen; web-share"
       allowfullscreen
       referrerpolicy="strict-origin-when-cross-origin">
@@ -766,9 +783,12 @@
   </div>
 
   <script>
-    const APP_VERSION = "2026.07.19.02-session-bridge";
+    const APP_VERSION = "2026.07.21.03-index42-cache-lock";
     const frame = document.getElementById("appFrame");
-    const APP_TARGET_URL = frame ? (frame.getAttribute("data-src") || frame.getAttribute("src") || "") : "";
+    const APP_BASE_URL = frame
+      ? String(frame.getAttribute("data-src") || "").trim()
+      : "";
+    const APP_RELEASE = "2026.07.21-index42-login-lock";
     const splash = document.getElementById("splash");
     const offlineAlert = document.getElementById("offlineAlert");
     const offlineScreen = document.getElementById("offlineScreen");
@@ -885,6 +905,38 @@
     let newWorkerWaiting = null;
     let splashTimer = null;
 
+    function syncAppViewport() {
+      const viewportHeight = window.visualViewport
+        ? window.visualViewport.height
+        : window.innerHeight;
+
+      document.documentElement.style.setProperty(
+        "--app-viewport-height",
+        Math.max(1, Math.round(viewportHeight)) + "px"
+      );
+    }
+
+    async function clearOldWrapperCachesOnce() {
+      const migrationKey = "ahis_wrapper_cache_migrated_" + APP_VERSION;
+
+      try {
+        if (localStorage.getItem(migrationKey) === "1") return;
+
+        if ("caches" in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(
+            cacheNames.map(function (cacheName) {
+              return caches.delete(cacheName);
+            })
+          );
+        }
+
+        localStorage.setItem(migrationKey, "1");
+      } catch (error) {
+        console.warn("Cache lama tidak dapat dibersihkan:", error);
+      }
+    }
+
     function isMobilePortraitLocked() {
       return Math.min(window.innerWidth, window.innerHeight) < 768;
     }
@@ -904,6 +956,21 @@
       }
     }
 
+    function buildAppUrl() {
+      if (!APP_BASE_URL) return "";
+
+      const separator = APP_BASE_URL.includes("?") ? "&" : "?";
+
+      /*
+       * Token rilis tetap berubah hanya ketika Index Apps Script diperbarui.
+       * Tidak memakai Date.now(), sehingga URL iframe tetap stabil pada
+       * setiap pembukaan aplikasi tetapi cache versi lama tidak digunakan.
+       */
+      return APP_BASE_URL + separator +
+        "wrapper=vercel" +
+        "&appRelease=" + encodeURIComponent(APP_RELEASE);
+    }
+
     function hideSplash() {
       clearTimeout(splashTimer);
       splash.classList.add("hide");
@@ -919,14 +986,37 @@
       } catch (err) {}
     }
 
-    function offlineLoadFrameIfOnline() {
+    function offlineLoadFrameIfOnline(forceReload) {
       if (!frame || !navigator.onLine) return;
+
+      const targetUrl = buildAppUrl();
+      if (!targetUrl) {
+        console.error("URL Apps Script belum tersedia pada data-src iframe.");
+        return;
+      }
+
       try {
-        if (!frame.getAttribute("src") || frame.getAttribute("src") === "about:blank") {
-          frame.setAttribute("src", APP_TARGET_URL);
+        const currentSrc = String(frame.getAttribute("src") || "").trim();
+
+        if (forceReload && currentSrc && currentSrc !== "about:blank") {
+          frame.setAttribute("src", "about:blank");
+
+          setTimeout(function () {
+            frame.setAttribute("src", targetUrl);
+            frame.style.visibility = "visible";
+          }, 80);
+
+          return;
         }
+
+        if (!currentSrc || currentSrc === "about:blank" || currentSrc !== targetUrl) {
+          frame.setAttribute("src", targetUrl);
+        }
+
         frame.style.visibility = "visible";
-      } catch (err) {}
+      } catch (err) {
+        console.warn("Iframe Apps Script gagal dimuat:", err);
+      }
     }
 
     function offlineShowPage() {
@@ -1078,14 +1168,40 @@
 
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
-    window.addEventListener("resize", applyOrientationPolicy);
-    window.addEventListener("orientationchange", function () {
-      setTimeout(applyOrientationPolicy, 250);
+    window.addEventListener("resize", function () {
+      syncAppViewport();
+      applyOrientationPolicy();
     });
 
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", syncAppViewport);
+      window.visualViewport.addEventListener("scroll", syncAppViewport);
+    }
+
+    window.addEventListener("orientationchange", function () {
+      setTimeout(function () {
+        syncAppViewport();
+        applyOrientationPolicy();
+      }, 250);
+    });
+
+    window.addEventListener("pageshow", function (event) {
+      syncAppViewport();
+
+      if (event.persisted && navigator.onLine) {
+        offlineLoadFrameIfOnline(true);
+      }
+    });
+
+    syncAppViewport();
     updateOnlineStatus();
-    if (navigator.onLine) offlineLoadFrameIfOnline();
     applyOrientationPolicy();
+
+    clearOldWrapperCachesOnce().finally(function () {
+      if (navigator.onLine) {
+        offlineLoadFrameIfOnline(false);
+      }
+    });
 
     frame.addEventListener("load", function () {
       setTimeout(hideSplash, 500);
@@ -1257,9 +1373,17 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", async function () {
         try {
-          const reg = await navigator.serviceWorker.register("./sw.js?v=" + APP_VERSION);
+          const reg = await navigator.serviceWorker.register(
+            "./sw.js?v=" + encodeURIComponent(APP_VERSION),
+            { updateViaCache: "none" }
+          );
+
+          if (reg.update) {
+            await reg.update();
+          }
 
           if (reg.waiting && navigator.serviceWorker.controller) {
+            newWorkerWaiting = reg.waiting;
             showPwaUpdatePopup(reg.waiting);
           }
 
@@ -1280,8 +1404,12 @@
           }, 60000);
 
           document.addEventListener("visibilitychange", function () {
-            if (document.visibilityState === "visible" && reg && reg.update) {
-              reg.update();
+            if (document.visibilityState === "visible") {
+              syncAppViewport();
+
+              if (reg && reg.update) {
+                reg.update();
+              }
             }
           });
 
